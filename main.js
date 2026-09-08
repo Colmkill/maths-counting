@@ -1,126 +1,127 @@
-// =========================================================================
-// 1. INITIALIZE ENGINE CANVAS
-// =========================================================================
-kaplay({
-    background: "#201a30", // Bright neon purple educational background
-    width: 800,
-    height: 600,
-})
-
-let score = 0;
-let currentTargetCount = 0;
-
-// Setup interface metric labels
-const scoreLabel = add([
-    text(`Score: ${score}`, { size: 24 }),
-    pos(24, 24),
-])
-
-const promptLabel = add([
-    text("How many dots can you count?", { size: 28 }),
-    pos(400, 80),
-    anchor("center"),
-    color(255, 255, 100) // Bright yellow prompt text
-])
-
-// =========================================================================
-// 2. FLASHCARD GENERATOR ENGINE (Draws visual counting objects)
-// =========================================================================
-function generateCountingFlashcard() {
-    // Wipe out the old round's dots and button tiles
-    destroyAll("flashcard-dot");
-    destroyAll("selector-button");
-
-    // 1. Pick a random number of items for the child to count (1 to 6)
-    currentTargetCount = randi(1, 7);
-
-    // 2. Render a large, clean white flashcard plate background using a vector block
-    add([
-        rect(460, 220, { radius: 16 }),
-        pos(400, 240),
-        color(255, 255, 255),
-        outline(6, "#ffaa00"), // Thick playful orange border outline
-        anchor("center"),
-        "flashcard-dot"
-    ]);
-
-    // 3. Arrange the counting dots in a neat grid pattern inside the card frame
-    for (let i = 0; i < currentTargetCount; i++) {
-        // Grid spacing math to handle columns and rows cleanly
-        const col = i % 3; 
-        const row = Math.floor(i / 3);
-        
-        const dotX = 310 + col * 90;
-        const dotY = 195 + row * 90;
-
-        // Render a bright, friendly counting circle object inside the frame window
-        add([
-            circle(28),
-            pos(dotX, dotY),
-            color(255, 60, 100), // Vibrant neon coral/red dots
-            outline(4, "#ffffff"),
-            anchor("center"),
-            "flashcard-dot"
-        ]);
+// Game Configuration and State
+const CONFIG = {
+    emojis: ['🍎', '🍌', '🍓', '🥕', '🥑', '🎈', '🚗', '🧸', '🐱', '🐶'],
+    feedbackDuration: 1800, // Time in milliseconds before the next round starts
+    difficultyMaxValues: {
+        easy: 5,
+        medium: 10,
+        hard: 20
     }
+};
 
-    // 4. Generate the clickable answer options button layout panel at the bottom
-    generateAnswerOptions(currentTargetCount);
+let gameState = {
+    targetCount: 0,
+    score: 0,
+    streak: 0,
+    isProcessing: false // Prevents multiple submissions during feedback
+};
+
+// DOM Elements
+const DOM = {
+    visualArea: document.getElementById('visualArea'),
+    score: document.getElementById('score'),
+    streak: document.getElementById('streak'),
+    answerInput: document.getElementById('userAnswer'),
+    feedback: document.getElementById('feedback'),
+    difficulty: document.getElementById('difficulty'),
+    submitBtn: document.getElementById('submitBtn')
+};
+
+/**
+ * Generates a new round of the game based on the selected difficulty.
+ */
+function generateGame() {
+    // Reset UI states
+    DOM.visualArea.innerHTML = '';
+    DOM.feedback.innerText = '';
+    DOM.feedback.className = 'feedback';
+    DOM.answerInput.value = '';
+    DOM.answerInput.focus();
+    gameState.isProcessing = false;
+
+    // Determine difficulty constraints
+    const currentDifficulty = DOM.difficulty.value;
+    const maxNumber = CONFIG.difficultyMaxValues[currentDifficulty] || 10;
+
+    // Setup targets
+    gameState.targetCount = Math.floor(Math.random() * maxNumber) + 1;
+    const randomEmoji = CONFIG.emojis[Math.floor(Math.random() * CONFIG.emojis.length)];
+
+    // Render counting items
+    for (let i = 0; i < gameState.targetCount; i++) {
+        const itemSpan = document.createElement('span');
+        itemSpan.className = 'count-item';
+        itemSpan.innerText = randomEmoji;
+        DOM.visualArea.appendChild(itemSpan);
+    }
 }
 
-// =========================================================================
-// 3. ANSWER OPTIONS SELECTION LAYOUT
-// =========================================================================
-function generateAnswerOptions(correctAnswer) {
-    // Generate an absolute pool of choices including the answer and random numbers
-    let optionsSet = new Set([correctAnswer]);
-    while (optionsSet.size < 4) {
-        optionsSet.add(randi(1, 7)); // Fill up to 4 unique button options
+/**
+ * Validates the user's answer and updates the score and streak.
+ */
+function checkAnswer() {
+    if (gameState.isProcessing) return;
+
+    const userAns = parseInt(DOM.answerInput.value, 10);
+    
+    // Check for empty or invalid input
+    if (isNaN(userAns)) {
+        DOM.feedback.innerText = "Please enter a number first! 🤔";
+        DOM.feedback.className = "feedback";
+        return;
     }
 
-    const shuffledChoices = shuffle(Array.from(optionsSet));
+    gameState.isProcessing = true;
+    DOM.submitBtn.disabled = true;
 
-    shuffledChoices.forEach((numValue, index) => {
-        const btnX = 145 + index * 170;
-        const btnY = 480;
+    // Process correctness
+    if (userAns === gameState.targetCount) {
+        gameState.score++;
+        gameState.streak++;
+        DOM.feedback.innerText = "Correct! Great job! 🎉";
+        DOM.feedback.className = "feedback correct";
+    } else {
+        gameState.streak = 0;
+        DOM.feedback.innerText = `Oops! That was ${gameState.targetCount}. Try the next one! ✨`;
+        DOM.feedback.className = "feedback incorrect";
+    }
 
-        // Interactive button container plate
-        const btn = add([
-            rect(120, 70, { radius: 12 }),
-            pos(btnX, btnY),
-            color(0, 180, 255), // Bright celestial blue button panels
-            outline(4, "#ffffff"),
-            area(),
-            anchor("center"),
-            "selector-button"
-        ]);
+    // Update stats UI
+    DOM.score.innerText = gameState.score;
+    DOM.streak.innerText = gameState.streak;
 
-        // Centered button typography number overlay string
-        add([
-            text(numValue.toString(), { size: 32 }),
-            pos(btnX, btnY),
-            anchor("center"),
-            color(255, 255, 255),
-            "selector-button"
-        ]);
-
-        // Evaluate click event callback correctness triggers
-        btn.onClick(() => {
-            if (numValue === correctAnswer) {
-                burp(); // Fun built-in celebratory win sound trigger
-                score += 10;
-                scoreLabel.text = `Score: ${score}`;
-                
-                // Instantly update the card canvas layout grid with a brand new challenge
-                generateCountingFlashcard();
-            } else {
-                shake(10); // Shake game field layout if wrong option is tapped
-            }
-        });
-    });
+    // Advance game after a short pause
+    setTimeout(() => {
+        DOM.submitBtn.disabled = false;
+        generateGame();
+    }, CONFIG.feedbackDuration);
 }
 
-// =========================================================================
-// 4. START THE APPLICATION LOGIC LOOP
-// =========================================================================
-generateCountingFlashcard();
+/**
+ * Resets score metrics and triggers a fresh game loop.
+ */
+function resetGame() {
+    gameState.score = 0;
+    gameState.streak = 0;
+    DOM.score.innerText = gameState.score;
+    DOM.streak.innerText = gameState.streak;
+    generateGame();
+}
+
+// --- Event Listeners ---
+
+// Listen for Enter keypress inside the input box
+DOM.answerInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        checkAnswer();
+    }
+});
+
+// Watch for dropdown changes to instantly reset difficulty
+DOM.difficulty.addEventListener('change', resetGame);
+
+// Connect standard button click
+DOM.submitBtn.addEventListener('click', checkAnswer);
+
+// Kick off the game on initial load
+document.addEventListener('DOMContentLoaded', generateGame);
