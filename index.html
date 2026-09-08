@@ -39,13 +39,11 @@
     </div>
 
     <script>
-        const gameData = [
-            { q: "5 × 5 = ?", options: ["15", "20", "25", "30", "35"], correct: "25" },
-            { q: "3 × 4 = ?", options: ["10", "12", "14", "16", "18"], correct: "12" },
-            { q: "8 × 2 = ?", options: ["12", "14", "16", "18", "20"], correct: "16" },
-            { q: "7 × 3 = ?", options: ["17", "19", "21", "23", "25"], correct: "21" },
-            { q: "9 × 4 = ?", options: ["32", "34", "36", "38", "40"], correct: "36" }
-        ];
+                   const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            
+            console.log(num1);
+            console.log(num2);
 
         let currentIndex = 0;
         let score = 0;
