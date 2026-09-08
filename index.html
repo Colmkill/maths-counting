@@ -95,6 +95,11 @@ function initLevel() {
 
     tile.onclick = () => {
         console.log("You clicked:", value);
+        if (value === correct) {
+    console.log("CORRECT!");
+} else {
+    console.log("WRONG!");
+}
     };
 
     gridContainer.appendChild(tile);
