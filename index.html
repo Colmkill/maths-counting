@@ -88,13 +88,25 @@ function initLevel() {
 
     document.getElementById("question").innerText =
         `${num1} × ${num2} = ?`;
-    
+  
+  const wrongAnswers = [];
+
+while (wrongAnswers.length < 4) {
+
+    const difference = Math.floor(Math.random() * 10) + 1;
+
+    const wrongAnswer = correct + difference;
+
+    if (!wrongAnswers.includes(wrongAnswer)) {
+        wrongAnswers.push(wrongAnswer);
+    }
+}
        const options = [
     correct,
-    correct + Math.floor(Math.random() * 10) + 1,
-    correct - Math.floor(Math.random() * 10) + 1,
-    correct + Math.floor(Math.random() * 10) + 1,
-    correct - Math.floor(Math.random() * 10) + 1
+    correct + wrongAnswer,
+    correct - wrongAnswer,
+    correct + wrongAnswer,
+    correct - wrongAnswer
 ];
       options.sort(() => Math.random() - 0.5);
     
