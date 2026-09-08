@@ -2,33 +2,91 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Counting Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counting Tile Game</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background: #f4f4f9; }
-        h1 { color: #333; }
-        #count { font-size: 80px; margin: 20px; color: #0070f3; }
-        button { font-size: 20px; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; border: none; background: #0070f3; color: white; }
-        button:hover { background: #0051bb; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #f0f2f5; margin: 0; padding: 40px 20px; }
+        .game-container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        
+        /* Question Tile Styling */
+        .question-tile { background: #0070f3; color: white; font-size: 36px; font-weight: bold; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0, 112, 243, 0.3); display: inline-block; min-width: 200px; }
+        
+        /* 5 Answer Tiles Layout */
+        .tiles-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 25px; }
+        
+        .answer-tile { background: #ffffff; border: 3px solid #e1e4e8; border-radius: 12px; font-size: 24px; font-weight: bold; color: #333; padding: 20px 0; cursor: pointer; transition: transform 0.1s, border-color 0.2s, background-color 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .answer-tile:hover { border-color: #0070f3; transform: translateY(-2px); background: #f7f9fc; }
+        .answer-tile:active { transform: translateY(0); }
+        
+        #score-board { font-size: 20px; font-weight: 600; color: #666; margin-top: 15px; }
+        
+        /* Responsive fallback for smaller screens */
+        @media (max-width: 500px) {
+            .tiles-grid { grid-template-columns: repeat(3, 1fr); }
+            .question-tile { font-size: 28px; }
+        }
     </style>
 </head>
 <body>
-    <h1>Simple Counting Game</h1>
-    <div id="count">0</div>
-    <button onclick="changeCount(1)">Count Up</button>
-    <button onclick="changeCount(-1)">Count Down</button>
-    <button onclick="resetCount()">Reset</button>
+    <div class="game-container">
+        <!-- Main equation tile -->
+        <div id="question" class="question-tile">...</div>
+        
+        <!-- 5 answer choice tiles -->
+        <div id="tiles" class="tiles-grid"></div>
+        
+        <div id="score-board"></div>
+    </div>
 
     <script>
+        const gameData = [
+            { q: "5 × 5 = ?", options: ["15", "20", "25", "30", "35"], correct: "25" },
+            { q: "3 × 4 = ?", options: ["10", "12", "14", "16", "18"], correct: "12" },
+            { q: "8 × 2 = ?", options: ["12", "14", "16", "18", "20"], correct: "16" },
+            { q: "7 × 3 = ?", options: ["17", "19", "21", "23", "25"], correct: "21" },
+            { q: "9 × 4 = ?", options: ["32", "34", "36", "38", "40"], correct: "36" }
+        ];
+
+        let currentIndex = 0;
         let score = 0;
-        const countEl = document.getElementById("count");
-        function changeCount(val) {
-            score += val;
-            countEl.innerText = score;
+
+        function initLevel() {
+            if (currentIndex >= gameData.length) {
+                document.getElementById("question").innerText = "🎉 Complete!";
+                document.getElementById("tiles").innerHTML = "";
+                document.getElementById("score-board").innerText = `Final Score: ${score} / ${gameData.length}`;
+                return;
+            }
+
+            const current = gameData[currentIndex];
+            document.getElementById("question").innerText = current.q;
+            document.getElementById("score-board").innerText = `Level: ${currentIndex + 1}/${gameData.length}  |  Score: ${score}`;
+            
+            const gridContainer = document.getElementById("tiles");
+            gridContainer.innerHTML = "";
+
+            current.options.forEach(val => {
+                const tile = document.createElement("button");
+                tile.className = "answer-tile";
+                tile.innerText = val;
+                tile.onclick = () => selectTile(val, current.correct);
+                gridContainer.appendChild(tile);
+            });
         }
-        function resetCount() {
-            score = 0;
-            countEl.innerText = score;
+
+        function selectTile(chosen, correct) {
+            if (chosen === correct) {
+                score++;
+                alert("Correct! 🌟");
+            } else {
+                alert(`Not quite! The correct answer was ${correct}.`);
+            }
+            currentIndex++;
+            initLevel();
         }
+
+        // Start the tile game
+        initLevel();
     </script>
 </body>
 </html>
