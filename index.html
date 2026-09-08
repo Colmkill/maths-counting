@@ -97,12 +97,12 @@ function initLevel() {
     tile.innerText = value;
 
     tile.onclick = () => {
-        console.log("You clicked:", value);
-        if (value === correct) {
-    console.log("CORRECT!");
-} else {
-    console.log("WRONG!");
-}
+          if (value === correct) {
+        document.getElementById("feedback").innerText = "Correct! 🌟";
+    } else {
+        document.getElementById("feedback").innerText = "Not quite!";
+    }
+
     };
 
     gridContainer.appendChild(tile);
