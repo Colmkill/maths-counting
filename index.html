@@ -59,31 +59,43 @@
         
 let currentIndex = 0;
 let score = 0;
-let currentLevel = 4; 
+let currentLevel = 3; 
 
         const levels = {
     1: {
         minNumber: 1,
         maxNumber: 5,
         maxDifference: 3,
-        operation: "addition"
+        operation: "addition",
+         allowNegative: false
     },
 
     2: {
         minNumber: 1,
         maxNumber: 10,
         maxDifference: 5,
-        operation: "subtraction"
+        operation: "subtraction",
+         allowNegative: false
     },
 
     3: {
         minNumber: 1,
+        maxNumber: 20,
+        maxDifference: 8,
+        operation: "subtraction",
+         allowNegative: true
+    },
+            
+    4: {
+        minNumber: 1,
         maxNumber: 12,
         maxDifference: 8,
-        operation: "multiplication"
+        operation: "multiplication",
+         allowNegative: true
     },
 
-    4: {
+
+    5: {
         minNumber: 1,
         maxNumber: 15,
         maxDifference: 8,
@@ -115,8 +127,10 @@ if (level.operation === "division") {
     correct = num1 / num2;
 }
 
-if (level.operation === "subtraction") {
-    correct = num1 - num2;
+if (level.operation === "subtraction" && !level.allowNegative) {
+    if (num2 > num1) {
+        [num1, num2] = [num2, num1];
+    }
 }
     
 console.log("Current level:", currentLevel);
