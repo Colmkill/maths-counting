@@ -57,26 +57,21 @@
         let currentIndex = 0;
         let score = 0;
 
-        function initLevel() {
+     function initLevel() {
 
-                // Create two random numbers
-                const num1 = Math.floor(Math.random() * 10) + 1;
-                const num2 = Math.floor(Math.random() * 10) + 1;
-            
-                // Calculate the correct answer
-                const correct = num1 * num2;
-            
-                // Create the question
-                const question = `${num1} × ${num2} = ?`;
-            
-                // Display the question
-                document.getElementById("question").innerText = question;
-            
-                // Test what we have created
-                console.log("Number 1:", num1);
-                console.log("Number 2:", num2);
-                console.log("Correct:", correct);
-            }
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+
+    const correct = num1 * num2;
+
+    const question = `${num1} × ${num2} = ?`;
+
+    document.getElementById("question").innerText = question;
+
+    console.log("Number 1:", num1);
+    console.log("Number 2:", num2);
+    console.log("Correct:", correct);
+}
 
         function selectTile(chosen, correct) {
             if (chosen === correct) {
