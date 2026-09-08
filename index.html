@@ -91,6 +91,9 @@ function initLevel() {
           tile.className = "answer-tile";
 
          tile.innerText = value;
+             
+        tile.onclick = () => {
+        console.log("You clicked:", value);
 
          gridContainer.appendChild(tile);
 });
