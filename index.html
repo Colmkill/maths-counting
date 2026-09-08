@@ -76,9 +76,34 @@
 let currentIndex = 0;
 let score = 0;
 let currentLevel = 1; 
+
+        const levels = {
+    1: {
+        minNumber: 1,
+        maxNumber: 5,
+        maxDifference: 3
+    },
+
+    2: {
+        minNumber: 1,
+        maxNumber: 10,
+        maxDifference: 5
+    },
+
+    3: {
+        minNumber: 1,
+        maxNumber: 12,
+        maxDifference: 8
+    }
+};
+        
         
 function initLevel() {
-
+    
+    const level = levels[currentLevel];
+console.log("Current level:", currentLevel);
+console.log("Level settings:", level);
+    
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
 
