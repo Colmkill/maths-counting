@@ -2,18 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Counting Flashcards</title>
+    <title>Math Counting Game</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #111; }
-        canvas { display: block; }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background: #f4f4f9; }
+        #game { background: white; padding: 20px; border-radius: 8px; display: inline-block; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input { font-size: 1.2rem; padding: 5px; width: 80px; text-align: center; }
+        button { font-size: 1.2rem; padding: 5px 15px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <!-- 1. Loads the stable KAPLAY game engine framework -->
-    <script src="https://unpkg.com"></script>
-    
-    <!-- 2. Automatically launches your new application code -->
-    <script type="module" src="main.js"></script>
+    <div id="game">
+        <h1>Math Counting Game</h1>
+        <p>Score: <span id="score">0</span></p>
+        <p id="question"></p>
+        <input type="number" id="answer" placeholder="?">
+        <button onclick="checkAnswer()">Submit</button>
+        <p id="feedback"></p>
+    </div>
+    <script>
+        let num1, num2, correctAnswer, score = 0;
+        function generateQuestion() {
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 + num2;
+            document.getElementById("question").innerText = `What is ${num1} + ${num2}?`;
+            document.getElementById("answer").value = "";
+        }
+        function checkAnswer() {
+            let userAns = parseInt(document.getElementById("answer").value);
+            let fb = document.getElementById("feedback");
+            if (userAns === correctAnswer) {
+                score++;
+                fb.innerText = "Correct! 🎉";
+                fb.style.color = "green";
+            } else {
+                fb.innerText = `Wrong! It was ${correctAnswer}.`;
+                fb.style.color = "red";
+            }
+            document.getElementById("score").innerText = score;
+            generateQuestion();
+        }
+        generateQuestion();
+    </script>
 </body>
 </html>
