@@ -89,13 +89,13 @@ function initLevel() {
     document.getElementById("question").innerText =
         `${num1} × ${num2} = ?`;
     
-        const options = [
-            correct,
-            correct + 2,
-            correct - 2,
-            correct + 5,
-            correct - 5
-        ];
+       const options = [
+    correct,
+    correct + Math.floor(Math.random() * 10) + 1,
+    correct - Math.floor(Math.random() * 10) + 1,
+    correct + Math.floor(Math.random() * 10) + 1,
+    correct - Math.floor(Math.random() * 10) + 1
+];
       options.sort(() => Math.random() - 0.5);
     
     const gridContainer = document.getElementById("tiles");
