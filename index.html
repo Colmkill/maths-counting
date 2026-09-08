@@ -65,9 +65,8 @@
     { q: "7 × 3 = ?", options: ["17", "19", "21", "23", "25"], correct: "21" },
     { q: "9 × 4 = ?", options: ["32", "34", "36", "38", "40"], correct: "36" }
 ];
-            const num1 = Math.floor(Math.random() * 10) + 1;
-            const num2 = Math.floor(Math.random() * 10) + 1;
-            
+        const num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
+        const num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
             console.log(num1);
             console.log(num2);
      // document.getElementById("question").innerText = `${num1} × ${num2} = ?`;
