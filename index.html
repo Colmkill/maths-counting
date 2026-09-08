@@ -95,7 +95,9 @@ while (wrongAnswers.length < 4) {
 
     const difference = Math.floor(Math.random() * 10) + 1;
 
-    const wrongAnswer = correct + difference;
+    const wrongAnswer = Math.random() < 0.5
+        ? correct + difference
+        : correct - difference;
 
     if (!wrongAnswers.includes(wrongAnswer)) {
         wrongAnswers.push(wrongAnswer);
