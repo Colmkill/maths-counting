@@ -127,6 +127,9 @@ if (level.operation === "multiplication") {
 if (level.operation === "division") {
     correct = num1 / num2;
 }
+if (level.operation === "subtraction") {
+    correct = num1 - num2;
+}
 
 if (level.operation === "subtraction" && !level.allowNegative) {
     if (num2 > num1) {
@@ -157,6 +160,7 @@ if (level.operation === "multiplication") {
 if (level.operation === "division") {
     operator = "/";
 }
+    
   document.getElementById("question").innerText =
     `${num1} ${operator} ${num2} = ?`;
   
