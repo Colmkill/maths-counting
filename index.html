@@ -34,8 +34,11 @@
         
         <!-- 5 answer choice tiles -->
         <div id="tiles" class="tiles-grid"></div>
+        <!-- Correct / incorrect feedback -->
+<div id="feedback" class="feedback-tile"></div>
+
+<div id="score-board"></div>
         
-        <div id="score-board"></div>
     </div>
 
     <script>
@@ -122,4 +125,14 @@ function initLevel() {
         initLevel();
     </script>
 </body>
+ <style>
+     .feedback-tile {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 12px;
+    min-height: 30px;
+}
+ </style>   
 </html>
