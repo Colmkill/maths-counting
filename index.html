@@ -58,28 +58,25 @@
         let score = 0;
 
         function initLevel() {
-            if (currentIndex >= gameData.length) {
-                document.getElementById("question").innerText = "🎉 Complete!";
-                document.getElementById("tiles").innerHTML = "";
-                document.getElementById("score-board").innerText = `Final Score: ${score} / ${gameData.length}`;
-                return;
-            }
 
-            const current = gameData[currentIndex];
-            document.getElementById("question").innerText = current.q;
-            document.getElementById("score-board").innerText = `Level: ${currentIndex + 1}/${gameData.length}  |  Score: ${score}`;
+                // Create two random numbers
+                const num1 = Math.floor(Math.random() * 10) + 1;
+                const num2 = Math.floor(Math.random() * 10) + 1;
             
-            const gridContainer = document.getElementById("tiles");
-            gridContainer.innerHTML = "";
-
-            current.options.forEach(val => {
-                const tile = document.createElement("button");
-                tile.className = "answer-tile";
-                tile.innerText = val;
-                tile.onclick = () => selectTile(val, current.correct);
-                gridContainer.appendChild(tile);
-            });
-        }
+                // Calculate the correct answer
+                const correct = num1 * num2;
+            
+                // Create the question
+                const question = `${num1} × ${num2} = ?`;
+            
+                // Display the question
+                document.getElementById("question").innerText = question;
+            
+                // Test what we have created
+                console.log("Number 1:", num1);
+                console.log("Number 2:", num2);
+                console.log("Correct:", correct);
+            }
 
         function selectTile(chosen, correct) {
             if (chosen === correct) {
