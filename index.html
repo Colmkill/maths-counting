@@ -78,20 +78,21 @@ function initLevel() {
             correct + 5,
             correct - 5
         ];
-
+      options.sort(() => Math.random() - 0.5);
+    
     const gridContainer = document.getElementById("tiles");
 
-gridContainer.innerHTML = "";
+          gridContainer.innerHTML = "";
 
-options.forEach(value => {
+         options.forEach(value => {
 
     const tile = document.createElement("button");
 
-    tile.className = "answer-tile";
+          tile.className = "answer-tile";
 
-    tile.innerText = value;
+         tile.innerText = value;
 
-    gridContainer.appendChild(tile);
+         gridContainer.appendChild(tile);
 });
 }
 
