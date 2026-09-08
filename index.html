@@ -2,264 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids Math Counting Game</title>
+    <title>Counting Game</title>
     <style>
-        :root {
-            --bg-color: #eef2f7;
-            --card-color: #ffffff;
-            --text-color: #2c3e50;
-            --primary-color: #4a90e2;
-            --success-color: #2ecc71;
-            --danger-color: #e74c3c;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .game-container {
-            background-color: var(--card-color);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-
-        h1 {
-            margin-top: 0;
-            color: var(--primary-color);
-            font-size: 2rem;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .difficulty-select {
-            margin-bottom: 20px;
-            padding: 8px 12px;
-            font-size: 1rem;
-            border-radius: 8px;
-            border: 2px solid var(--primary-color);
-            outline: none;
-            cursor: pointer;
-        }
-
-        .visual-area {
-            background-color: #f8fafc;
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 100px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            border: 2px dashed #cbd5e1;
-        }
-
-        .count-item {
-            font-size: 2.5rem;
-            animation: popIn 0.3s ease-out;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-
-        .question-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        input[type="number"] {
-            width: 100px;
-            padding: 12px;
-            font-size: 1.5rem;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input[type="number"]:focus {
-            border-color: var(--primary-color);
-        }
-
-        /* Removes arrow spinners on number input */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        button:hover {
-            background-color: #357abd;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .feedback {
-            font-size: 1.2rem;
-            font-weight: bold;
-            min-height: 1.5rem;
-            margin-top: 15px;
-        }
-
-        .correct { color: var(--success-color); }
-        .incorrect { color: var(--danger-color); }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background: #f4f4f9; }
+        h1 { color: #333; }
+        #count { font-size: 80px; margin: 20px; color: #0070f3; }
+        button { font-size: 20px; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; border: none; background: #0070f3; color: white; }
+        button:hover { background: #0051bb; }
     </style>
 </head>
 <body>
-
-    <div class="game-container">
-        <h1>🔢 Fun Math Counting</h1>
-        
-        <div class="stats-bar">
-            <div>Score: <span id="score">0</span></div>
-            <div>Streak: <span id="streak">0</span> 🔥</div>
-        </div>
-
-        <select id="difficulty" class="difficulty-select" onchange="resetGame()">
-            <option value="easy">Easy (1 - 5)</option>
-            <option value="medium" selected>Medium (1 - 10)</option>
-            <option value="hard">Hard (1 - 20)</option>
-        </select>
-
-        <div id="visualArea" class="visual-area"></div>
-        <div id="question" class="question-text">How many objects do you count?</div>
-
-        <div class="input-group">
-            <input type="number" id="userAnswer" min="0" placeholder="?">
-            <button id="submitBtn" onclick="checkAnswer()">Submit</button>
-        </div>
-
-        <div id="feedback" class="feedback"></div>
-    </div>
+    <h1>Simple Counting Game</h1>
+    <div id="count">0</div>
+    <button onclick="changeCount(1)">Count Up</button>
+    <button onclick="changeCount(-1)">Count Down</button>
+    <button onclick="resetCount()">Reset</button>
 
     <script>
-        const emojis = ['🍎', '🍌', '🍓', '🥕', '🥑', '🎈', '🚗', '🧸', '🐱', '🐶'];
-        let targetCount = 0;
         let score = 0;
-        let streak = 0;
-
-        const visualArea = document.getElementById('visualArea');
-        const scoreEl = document.getElementById('score');
-        const streakEl = document.getElementById('streak');
-        const answerInput = document.getElementById('userAnswer');
-        const feedbackEl = document.getElementById('feedback');
-        const difficultySelect = document.getElementById('difficulty');
-
-        function generateGame() {
-            visualArea.innerHTML = '';
-            feedbackEl.innerText = '';
-            answerInput.value = '';
-            answerInput.focus();
-
-            let maxNumber = 10;
-            const difficulty = difficultySelect.value;
-            if (difficulty === 'easy') maxNumber = 5;
-            if (difficulty === 'hard') maxNumber = 20;
-
-            targetCount = Math.floor(Math.random() * maxNumber) + 1;
-            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-
-            for (let i = 0; i < targetCount; i++) {
-                const span = document.createElement('span');
-                span.className = 'count-item';
-                span.innerText = randomEmoji;
-                visualArea.appendChild(span);
-            }
+        const countEl = document.getElementById("count");
+        function changeCount(val) {
+            score += val;
+            countEl.innerText = score;
         }
-
-        function checkAnswer() {
-            const userAns = parseInt(answerInput.value);
-            
-            if (isNaN(userAns)) {
-                feedbackEl.innerText = "Please enter a number first! 🤔";
-                feedbackEl.className = "feedback";
-                return;
-            }
-
-            if (userAns === targetCount) {
-                score++;
-                streak++;
-                feedbackEl.innerText = "Correct! Great job! 🎉";
-                feedbackEl.className = "feedback correct";
-            } else {
-                streak = 0;
-                feedbackEl.innerText = `Oops! That was ${targetCount}. Try the next one! ✨`;
-                feedbackEl.className = "feedback incorrect";
-            }
-
-            scoreEl.innerText = score;
-            streakEl.innerText = streak;
-
-            // Short pause to display feedback before loading next question
-            document.getElementById('submitBtn').disabled = true;
-            setTimeout(() => {
-                document.getElementById('submitBtn').disabled = false;
-                generateGame();
-            }, 1800);
-        }
-
-        function resetGame() {
+        function resetCount() {
             score = 0;
-            streak = 0;
-            scoreEl.innerText = score;
-            streakEl.innerText = streak;
-            generateGame();
+            countEl.innerText = score;
         }
-
-        // Allow user to press Enter to submit
-        answerInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
-        });
-
-        // Initialize game on load
-        generateGame();
     </script>
 </body>
 </html>
