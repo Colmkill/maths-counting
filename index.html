@@ -103,8 +103,8 @@ function initLevel() {
 console.log("Current level:", currentLevel);
 console.log("Level settings:", level);
     
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
+        const num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
+        const num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
 
     const correct = num1 * num2;
 
