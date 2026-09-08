@@ -86,17 +86,18 @@ function initLevel() {
 
          options.forEach(value => {
 
+ 
     const tile = document.createElement("button");
 
-          tile.className = "answer-tile";
+    tile.className = "answer-tile";
 
-         tile.innerText = value;
-             
+    tile.innerText = value;
 
-         gridContainer.appendChild(tile);
-
-        tile.onclick = () => {
+    tile.onclick = () => {
         console.log("You clicked:", value);
+    };
+
+    gridContainer.appendChild(tile);
 });
 }
 
