@@ -25,8 +25,7 @@
             .tiles-grid { grid-template-columns: repeat(3, 1fr); }
             .question-tile { font-size: 28px; }
         }
-    </style>
-        <style>
+   
     .feedback-tile {
     background: #ffffff;
     border: 3px solid #e1e4e8;
@@ -60,7 +59,7 @@
         
 let currentIndex = 0;
 let score = 0;
-let currentLevel = 1; 
+let currentLevel = 2; 
 
         const levels = {
     1: {
@@ -96,11 +95,11 @@ let currentLevel = 1;
 function initLevel() {
     
     const level = levels[currentLevel];
-console.log("Current level:", currentLevel);
-console.log("Level settings:", level);
+    console.log("Current level:", currentLevel);
+    console.log("Level settings:", level);
     
-        const num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
-        const num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
+    const num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
+    const num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
 
 
     let correct;
@@ -119,16 +118,32 @@ if (level.operation === "division") {
 if (level.operation === "subtraction") {
     correct = num1 - num2;
 }
+    
 console.log("Current level:", currentLevel);
 console.log("Operation:", level.operation);
 console.log("Max number:", level.maxNumber);
 console.log("Max difference:", level.maxDifference);
-    console.log("Number 1:", num1);
-    console.log("Number 2:", num2);
-    console.log("Correct answer:", correct);
+console.log("Number 1:", num1);
+console.log("Number 2:", num2);
+console.log("Correct answer:", correct);
+let operator;
 
-    document.getElementById("question").innerText =
-        `${num1} + ${num2} = ?`;
+if (level.operation === "addition") {
+    operator = "+";
+}
+
+if (level.operation === "subtraction") {
+    operator = "-";
+}
+
+if (level.operation === "multiplication") {
+    operator = "×";
+}
+if (level.operation === "division") {
+    operator = "/";
+}
+  document.getElementById("question").innerText =
+    `${num1} ${operator} ${num2} = ?`;
   
 const wrongAnswers = [];
 
