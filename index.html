@@ -165,7 +165,14 @@ function initLevel() {
 let num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
 let num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
 
-    let correct;
+// For non-negative subtraction, ensure num1 >= num2 BEFORE calculating correct answer
+if (level.operation === "subtraction" && !level.allowNegative) {
+    if (num2 > num1) {
+        [num1, num2] = [num2, num1];
+    }
+}
+
+let correct;
 
 if (level.operation === "addition") {
     correct = num1 + num2;
@@ -179,12 +186,6 @@ if (level.operation === "division") {
 }
 if (level.operation === "subtraction") {
     correct = num1 - num2;
-}
-
-if (level.operation === "subtraction" && !level.allowNegative) {
-    if (num2 > num1) {
-        [num1, num2] = [num2, num1];
-    }
 }
 
 console.log("Current level:", currentLevel);
