@@ -8,6 +8,30 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #f0f2f5; margin: 0; padding: 40px 20px; }
         .game-container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
 
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background: #e1e4e8;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #28a745;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
         /* Question Tile Styling */
         .question-tile { background: #0070f3; color: white; font-size: 36px; font-weight: bold; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0, 112, 243, 0.3); display: inline-block; min-width: 200px; }
 
@@ -46,12 +70,18 @@
 </head>
 <body>
     <div class="game-container">
+        <!-- Progress Bar -->
+        <div class="progress-text" id="level-info">Level: 1</div>
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
         <!-- Main equation tile -->
         <div id="question" class="question-tile">...</div>
 
         <!-- 5 answer choice tiles -->
         <div id="tiles" class="tiles-grid"></div>
-        <!--  / in feedback -->
+        <!-- Correct / incorrect feedback -->
 <div id="feedback" class="feedback-tile"></div>
 
 <div id="score-board"></div>
@@ -63,6 +93,7 @@
 let currentIndex = 0;
 let score = 0;
 let currentLevel = 1;
+let correctStreak = 0;
 let timeoutId = null;
 
         const levels = {
@@ -89,7 +120,7 @@ let timeoutId = null;
         operation: "subtraction",
          allowNegative: true
     },
-            
+
     4: {
         minNumber: 1,
         maxNumber: 12,
@@ -107,7 +138,21 @@ let timeoutId = null;
     }
 };
 
-        function initLevel() {
+function updateProgressBar() {
+    const progressPercentage = (correctStreak / 10) * 100;
+    document.getElementById("progress-bar").style.width = progressPercentage + "%";
+    document.getElementById("level-info").innerText = `Level: ${currentLevel} (${correctStreak}/10)`;
+}
+
+function checkLevelUp() {
+    if (correctStreak >= 10 && currentLevel < 5) {
+        currentLevel++;
+        correctStreak = 0;
+        updateProgressBar();
+    }
+}
+
+function initLevel() {
     // Clear any existing timeout
     if (timeoutId) {
         clearTimeout(timeoutId);
@@ -214,17 +259,21 @@ options.sort(() => Math.random() - 0.5);
         }
 
           if (value === correct) {
-               document.getElementById("feedback").innerText = `Correct! 🌟 Level: ${currentLevel}`;
+                document.getElementById("feedback").innerText = "Correct! 🌟";
                 document.getElementById("feedback").className = "feedback-tile correct";
                 score++;
+                correctStreak++;
                 document.getElementById("score-board").innerText = `Score: ${score}`;
+                updateProgressBar();
+                checkLevelUp();
                 timeoutId = setTimeout(() => {
                     initLevel();
                 }, 2000);
             } else {
-           document.getElementById("feedback").innerText = `Not quite!\nCorrect answer: ${correct}\nLevel: ${currentLevel}`;
-
+                document.getElementById("feedback").innerText = `Not quite! Correct answer: ${correct}. Level: ${currentLevel}`;
                 document.getElementById("feedback").className = "feedback-tile incorrect";
+                correctStreak = 0;
+                updateProgressBar();
                 timeoutId = setTimeout(() => {
                     initLevel();
                 }, 3000);
@@ -237,6 +286,7 @@ options.sort(() => Math.random() - 0.5);
 
 // Start the tile game
 document.getElementById("score-board").innerText = `Score: ${score}`;
+updateProgressBar();
 initLevel();
     </script>
 
