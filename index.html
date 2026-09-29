@@ -181,9 +181,19 @@ if (level.operation === "multiplication") {
     correct = num1 * num2;
 }
 
+// For division, ensure whole numbers only
 if (level.operation === "division") {
-    correct = num1 / num2;
+    // Generate divisor first (num2)
+    num2 = Math.floor(Math.random() * (level.maxNumber / 2)) + 1;
+    // Generate multiplier
+    const maxMultiplier = Math.floor(level.maxNumber / num2);
+    const multiplier = Math.floor(Math.random() * maxMultiplier) + 1;
+    num1 = num2 * multiplier;
+} else {
+    num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
+    num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
 }
+    
 if (level.operation === "subtraction") {
     correct = num1 - num2;
 }
