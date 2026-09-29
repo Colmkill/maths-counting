@@ -7,25 +7,28 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #f0f2f5; margin: 0; padding: 40px 20px; }
         .game-container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-        
+
         /* Question Tile Styling */
         .question-tile { background: #0070f3; color: white; font-size: 36px; font-weight: bold; padding: 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0, 112, 243, 0.3); display: inline-block; min-width: 200px; }
-        
+
         /* 5 Answer Tiles Layout */
         .tiles-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 25px; }
-        
+
         .answer-tile { background: #ffffff; border: 3px solid #e1e4e8; border-radius: 12px; font-size: 24px; font-weight: bold; color: #333; padding: 20px 0; cursor: pointer; transition: transform 0.1s, border-color 0.2s, background-color 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
         .answer-tile:hover { border-color: #0070f3; transform: translateY(-2px); background: #f7f9fc; }
         .answer-tile:active { transform: translateY(0); }
-        
+
         #score-board { font-size: 20px; font-weight: 600; color: #666; margin-top: 15px; }
-        
+
+        #feedback.correct { border-color: #28a745; background: #d4edda; }
+        #feedback.incorrect { border-color: #dc3545; background: #f8d7da; }
+
         /* Responsive fallback for smaller screens */
         @media (max-width: 500px) {
             .tiles-grid { grid-template-columns: repeat(3, 1fr); }
             .question-tile { font-size: 28px; }
         }
-   
+
     .feedback-tile {
     background: #ffffff;
     border: 3px solid #e1e4e8;
@@ -39,27 +42,28 @@
     max-width: 300px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.04);
 }
- </style> 
+ </style>
 </head>
 <body>
     <div class="game-container">
         <!-- Main equation tile -->
         <div id="question" class="question-tile">...</div>
-        
+
         <!-- 5 answer choice tiles -->
         <div id="tiles" class="tiles-grid"></div>
         <!-- Correct / incorrect feedback -->
 <div id="feedback" class="feedback-tile"></div>
 
 <div id="score-board"></div>
-        
+
     </div>
 
     <script>
-        
+
 let currentIndex = 0;
 let score = 0;
-let currentLevel = 1; 
+let currentLevel = 1;
+let timeoutId = null;
 
         const levels = {
     1: {
@@ -94,7 +98,6 @@ let currentLevel = 1;
          allowNegative: true
     },
 
-
     5: {
         minNumber: 1,
         maxNumber: 15,
@@ -103,17 +106,19 @@ let currentLevel = 1;
         allowNegative: true
     }
 };
-        
-        
-function initLevel() {
-    
+
+        function initLevel() {
+    // Clear any existing timeout
+    if (timeoutId) {
+        clearTimeout(timeoutId);
+    }
+
     const level = levels[currentLevel];
     console.log("Current level:", currentLevel);
     console.log("Level settings:", level);
-    
+
 let num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
 let num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
-
 
     let correct;
 
@@ -136,7 +141,7 @@ if (level.operation === "subtraction" && !level.allowNegative) {
         [num1, num2] = [num2, num1];
     }
 }
-    
+
 console.log("Current level:", currentLevel);
 console.log("Operation:", level.operation);
 console.log("Max number:", level.maxNumber);
@@ -160,10 +165,14 @@ if (level.operation === "multiplication") {
 if (level.operation === "division") {
     operator = "/";
 }
-    
+
   document.getElementById("question").innerText =
     `${num1} ${operator} ${num2} = ?`;
-  
+
+  // Reset feedback
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("feedback").className = "feedback-tile";
+
 const wrongAnswers = [];
 
 while (wrongAnswers.length < 4) {
@@ -185,14 +194,13 @@ const options = [
 ];
 
 options.sort(() => Math.random() - 0.5);
-    
+
     const gridContainer = document.getElementById("tiles");
 
           gridContainer.innerHTML = "";
 
-         options.forEach(value => {
+        options.forEach(value => {
 
- 
     const tile = document.createElement("button");
 
     tile.className = "answer-tile";
@@ -200,35 +208,36 @@ options.sort(() => Math.random() - 0.5);
     tile.innerText = value;
 
     tile.onclick = () => {
-          if (value === correct) {
-        document.getElementById("feedback").innerText = "Correct! 🌟";
-    } else {
-        document.getElementById("feedback").innerText = "Not quite!";
-    }
+        // Clear any existing timeout
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
 
+          if (value === correct) {
+                document.getElementById("feedback").innerText = "Correct! 🌟";
+                document.getElementById("feedback").className = "feedback-tile correct";
+                score++;
+                document.getElementById("score-board").innerText = `Score: ${score}`;
+                timeoutId = setTimeout(() => {
+                    initLevel();
+                }, 2000);
+            } else {
+                document.getElementById("feedback").innerText = "Not quite!";
+                document.getElementById("feedback").className = "feedback-tile incorrect";
+                timeoutId = setTimeout(() => {
+                    initLevel();
+                }, 3000);
+            }
     };
 
     gridContainer.appendChild(tile);
 });
 }
 
-        
-        function selectTile(chosen, correct) {
-            if (chosen === correct) {
-                score++;
-                alert("Correct! 🌟");
-            } else {
-                alert(`Not quite! The correct answer was ${correct}.`);
-            }
-            currentIndex++;
-            initLevel();
-        }
-
-        // Start the tile game
-        initLevel();
+// Start the tile game
+document.getElementById("score-board").innerText = `Score: ${score}`;
+initLevel();
     </script>
-    
 
 </body>
-  
 </html>
