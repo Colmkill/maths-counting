@@ -162,114 +162,98 @@ function initLevel() {
     console.log("Current level:", currentLevel);
     console.log("Level settings:", level);
 
-let num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
-let num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
+    let num1, num2;
 
-// For non-negative subtraction, ensure num1 >= num2 BEFORE calculating correct answer
-if (level.operation === "subtraction" && !level.allowNegative) {
-    if (num2 > num1) {
-        [num1, num2] = [num2, num1];
+    // Generate numbers based on operation type
+    if (level.operation === "division") {
+        // For whole number division only
+        num2 = Math.floor(Math.random() * (level.maxNumber / 2)) + 1;
+        const maxMultiplier = Math.floor(level.maxNumber / num2);
+        const multiplier = Math.floor(Math.random() * maxMultiplier) + 1;
+        num1 = num2 * multiplier;
+    } else {
+        num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
+        num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
     }
-}
 
-let correct;
-
-if (level.operation === "addition") {
-    correct = num1 + num2;
-}
-if (level.operation === "multiplication") {
-    correct = num1 * num2;
-}
-
-// For division, ensure whole numbers only
-if (level.operation === "division") {
-    // Generate divisor first (num2)
-    num2 = Math.floor(Math.random() * (level.maxNumber / 2)) + 1;
-    // Generate multiplier
-    const maxMultiplier = Math.floor(level.maxNumber / num2);
-    const multiplier = Math.floor(Math.random() * maxMultiplier) + 1;
-    num1 = num2 * multiplier;
-} else {
-    num1 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
-    num2 = Math.floor(Math.random() * level.maxNumber) + level.minNumber;
-}
-    
-if (level.operation === "subtraction") {
-    correct = num1 - num2;
-}
-
-console.log("Current level:", currentLevel);
-console.log("Operation:", level.operation);
-console.log("Max number:", level.maxNumber);
-console.log("Max difference:", level.maxDifference);
-console.log("Number 1:", num1);
-console.log("Number 2:", num2);
-console.log("Correct answer:", correct);
-let operator;
-
-if (level.operation === "addition") {
-    operator = "+";
-}
-
-if (level.operation === "subtraction") {
-    operator = "-";
-}
-
-if (level.operation === "multiplication") {
-    operator = "×";
-}
-if (level.operation === "division") {
-    operator = "/";
-}
-
-  document.getElementById("question").innerText =
-    `${num1} ${operator} ${num2} = ?`;
-
-  // Reset feedback
-  document.getElementById("feedback").innerText = "";
-  document.getElementById("feedback").className = "feedback-tile";
-
-const wrongAnswers = [];
-
-while (wrongAnswers.length < 4) {
-
-    const difference = Math.floor(Math.random() * 10) + 1;
-
-    const wrongAnswer = Math.random() < 0.5
-        ? correct + difference
-        : correct - difference;
-
-    if (!wrongAnswers.includes(wrongAnswer)) {
-        wrongAnswers.push(wrongAnswer);
+    // For non-negative subtraction, ensure num1 >= num2 BEFORE calculating correct answer
+    if (level.operation === "subtraction" && !level.allowNegative) {
+        if (num2 > num1) {
+            [num1, num2] = [num2, num1];
+        }
     }
-}
 
-const options = [
-    correct,
-    ...wrongAnswers
-];
+    // Calculate correct answer - MUST use else-if chain
+    let correct;
+    if (level.operation === "addition") {
+        correct = num1 + num2;
+    } else if (level.operation === "multiplication") {
+        correct = num1 * num2;
+    } else if (level.operation === "division") {
+        correct = num1 / num2;
+    } else if (level.operation === "subtraction") {
+        correct = num1 - num2;
+    }
 
-options.sort(() => Math.random() - 0.5);
+    console.log("Current level:", currentLevel);
+    console.log("Operation:", level.operation);
+    console.log("Number 1:", num1);
+    console.log("Number 2:", num2);
+    console.log("Correct answer:", correct);
+
+    let operator;
+    if (level.operation === "addition") {
+        operator = "+";
+    } else if (level.operation === "subtraction") {
+        operator = "-";
+    } else if (level.operation === "multiplication") {
+        operator = "×";
+    } else if (level.operation === "division") {
+        operator = "÷";
+    }
+
+    document.getElementById("question").innerText =
+        `${num1} ${operator} ${num2} = ?`;
+
+    // Reset feedback
+    document.getElementById("feedback").innerText = "";
+    document.getElementById("feedback").className = "feedback-tile";
+
+    const wrongAnswers = [];
+
+    while (wrongAnswers.length < 4) {
+        const difference = Math.floor(Math.random() * 10) + 1;
+        const wrongAnswer = Math.random() < 0.5
+            ? correct + difference
+            : correct - difference;
+
+        if (!wrongAnswers.includes(wrongAnswer)) {
+            wrongAnswers.push(wrongAnswer);
+        }
+    }
+
+    const options = [
+        correct,
+        ...wrongAnswers
+    ];
+
+    options.sort(() => Math.random() - 0.5);
 
     const gridContainer = document.getElementById("tiles");
+    gridContainer.innerHTML = "";
 
-          gridContainer.innerHTML = "";
+    options.forEach(value => {
+        const tile = document.createElement("button");
+        tile.className = "answer-tile";
+        tile.innerText = value;
 
-        options.forEach(value => {
+        tile.onclick = () => {
+            // Clear any existing timeout
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
 
-    const tile = document.createElement("button");
-
-    tile.className = "answer-tile";
-
-    tile.innerText = value;
-
-    tile.onclick = () => {
-        // Clear any existing timeout
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-
-          if (value === correct) {
+            if (value === correct) {
                 document.getElementById("feedback").innerText = "Correct! 🌟";
                 document.getElementById("feedback").className = "feedback-tile correct";
                 score++;
@@ -289,10 +273,10 @@ options.sort(() => Math.random() - 0.5);
                     initLevel();
                 }, 3000);
             }
-    };
+        };
 
-    gridContainer.appendChild(tile);
-});
+        gridContainer.appendChild(tile);
+    });
 }
 
 // Start the tile game
