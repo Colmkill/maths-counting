@@ -222,7 +222,8 @@ options.sort(() => Math.random() - 0.5);
                     initLevel();
                 }, 2000);
             } else {
-             document.getElementById("feedback").innerText = `Not quite! <br> Correct answer: ${correct}. <br> Level: ${currentLevel}`;
+           document.getElementById("feedback").innerText = `Not quite!\nCorrect answer: ${correct}\nLevel: ${currentLevel}`;
+
                 document.getElementById("feedback").className = "feedback-tile incorrect";
                 timeoutId = setTimeout(() => {
                     initLevel();
