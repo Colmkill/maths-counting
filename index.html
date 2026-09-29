@@ -51,7 +51,7 @@
 
         <!-- 5 answer choice tiles -->
         <div id="tiles" class="tiles-grid"></div>
-        <!-- Correct / incorrect feedback -->
+        <!--  / in feedback -->
 <div id="feedback" class="feedback-tile"></div>
 
 <div id="score-board"></div>
@@ -222,7 +222,7 @@ options.sort(() => Math.random() - 0.5);
                     initLevel();
                 }, 2000);
             } else {
-                document.getElementById("feedback").innerText = "Not quite!";
+              document.getElementById("feedback").innerText = "Not quite! Correct answer: " + correct;
                 document.getElementById("feedback").className = "feedback-tile incorrect";
                 timeoutId = setTimeout(() => {
                     initLevel();
